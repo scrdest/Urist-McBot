@@ -1,0 +1,1 @@
+from uristmcbot.app import *
