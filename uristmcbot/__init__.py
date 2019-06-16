@@ -1,1 +1,1 @@
-from uristmcbot.app import *
+from app import *

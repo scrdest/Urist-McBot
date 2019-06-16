@@ -1,2 +1,4 @@
+hug
+gunicorn
 pytest
 discord
