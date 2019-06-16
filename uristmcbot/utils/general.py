@@ -13,6 +13,24 @@ def get_token():
             finally: pass
             
     if token is NotImplemented:
-        return ("Token not found!")
+        raise ValueError("Token not found!")
         
     return token
+    
+    
+def check_admin_pass():
+    adminpass = os.environ.get('API_ADMIN_PASS', None)
+        
+    if not adminpass:
+        from app import PASSPATH
+        with open(PASSPATH) as passfile:
+            try: adminpass = passfile.read()
+            # super rudimentary for now
+            finally: pass
+        
+    if not adminpass:
+        raise ValueError("Admin password definition not found!")
+        
+    return adminpass
+    
+    

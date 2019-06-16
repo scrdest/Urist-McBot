@@ -3,6 +3,7 @@ import hug
 
 PROJECT_ROOT = os.path.dirname(__file__)
 TOKENPATH = os.path.join(PROJECT_ROOT, 'token.txt')
+PASSPATH = os.path.join(PROJECT_ROOT, 'passdb.txt')
 API_NAME = __name__
 
 API = hug.API(API_NAME)
