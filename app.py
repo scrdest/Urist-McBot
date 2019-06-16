@@ -8,6 +8,7 @@ API_NAME = __name__
 
 API = hug.API(API_NAME)
 bot = None
+botthread = None
 
 from uristmcbot.api import commands as apicmds
 from uristmcbot.api import index

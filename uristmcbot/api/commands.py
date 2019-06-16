@@ -1,4 +1,5 @@
 import sys
+import threading
 
 import hug
 
@@ -11,9 +12,9 @@ KEY_ERROR = 'errors'
 @hug.cli()
 @hug.local()
 def setup_bot(*args, **kwargs):
-    from uristmcbot.client import UristBot as bot_type
-    bot = bot_type(*args, **kwargs)
+    from uristmcbot.client import UristBot as bot
     return bot
+    
     
 @hug.get(urls={'/run'}, requires=hug.authentication.basic(hug.authentication.verify('admin', general_utils.check_admin_pass())))
 @hug.cli()
@@ -23,6 +24,9 @@ def run_bot(bot=None, token=NotImplemented):
         KEY_STATUS: [],
         KEY_ERROR: []
     }
+    if app.botthread and app.botthread.is_alive():
+        rvals[KEY_STATUS].append("Bot already running and currently in an 'alive' state.")
+        return rvals
     
     _token = token
     if _token is NotImplemented:
@@ -35,12 +39,14 @@ def run_bot(bot=None, token=NotImplemented):
         
     _bot = bot or setup_bot()
     app.bot = _bot
-    
     try: 
-        app.bot.run(_token)
-    except Exception as E: 
-        sys.excepthook(*sys.exc_info())
-        rvals[KEY_ERROR].append("Bot died with exception: {}".format(E))
+        app.botthread = threading.Thread(target=lambda: app.bot.run(_token), name='BotThread', daemon=True)
+        app.botthread.start()
+    #except Exception as E: 
+    #    sys.excepthook(*sys.exc_info())
+    #    rvals[KEY_ERROR].append("Bot died with exception: {}".format(E))
+    finally:
+        pass
     
     if rvals[KEY_ERROR]:
         rvals[KEY_STATUS].append('An error has occured! See field `{errkey}` for details.'.format(errkey=KEY_ERROR))
