@@ -39,12 +39,11 @@ class Urist_Bot(commands.Bot):
         )
         self.raw_logs.append(logval)
         print(logval)
-        #await message.channel.send('Message from {0.author}: {0.content}'.format(message))
+        
+        if message.content.lower().strip().startswith('$wave'):
+            await message.channel.send('Hey there {0.author}! :wave::skin-tone-1:'.format(message))
         
 UristBot = Urist_Bot()
 
-#@UristBot.command()
-#async def login(ctx):
-#    await UristBot.say('Logged on as {0}!'.format('Urist McBot'))
 
 
