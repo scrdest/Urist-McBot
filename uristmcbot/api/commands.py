@@ -1,5 +1,6 @@
 import sys
 import threading
+import asyncio
 
 import hug
 
@@ -19,8 +20,6 @@ def setup_bot(*args, **kwargs):
 
 
 def _bot_process(bot=None, token=None, rebuild_bot=False):
-    import asyncio
-    
     bot = (bot if not rebuild_bot else None) or setup_bot()
     
     _token = token
@@ -34,6 +33,7 @@ def _bot_process(bot=None, token=None, rebuild_bot=False):
     if bot.loop and bot.loop.is_running() and not bot.loop.is_closed():
         bot.loop.stop()
         bot.loop.close()
+        bot.clear()
         
     bot.run(_token)
     return
@@ -81,6 +81,21 @@ def get_bot_logs(bot=None):
         return {KEY_ERROR: 'Bot not initialized!'}
     logs = getattr(bot, 'raw_logs', {'NOT AVAILABLE!'})
     rvals['logs'] = {i: line for i,line in enumerate(logs)}
+    return rvals
+    
+@hug.get(urls='/kill', requires=hug.authentication.basic(hug.authentication.verify('admin', general_utils.check_admin_pass())))
+@hug.cli()
+@hug.local()
+def kill_bot(bot=None):
+    rvals = {}
+    bot = bot or app.bot
+    rvals[KEY_STATUS] = 'Bot aliv and stronk.' if bot else 'No bots initialized.'
+    rvals.update(general_utils.get_endpoints())
+    if bot:
+        from time import sleep
+        bot.loop.stop()
+        bot.clear()
+        rvals[KEY_STATUS] = 'Bot killed!'
     return rvals
     
 if __name__ == '__main__':
