@@ -4,12 +4,15 @@ import discord
 
 from discord.ext import commands
 
-class Urist_Bot(commands.Bot):
+class UristBot(commands.Bot):
     def __init__(self, *args, command_prefix='&', botname='Urist McBot', buffer_size=10, **kwargs):
         super().__init__(command_prefix=command_prefix, *args, **kwargs)
         self._botname = botname
         self.buffer_size = buffer_size
         self._logbuffer = collections.deque(maxlen=self.buffer_size)
+        
+    def __str__(self):
+        return self._botname
         
     @property
     def raw_logs(self):
@@ -39,11 +42,12 @@ class Urist_Bot(commands.Bot):
         )
         self.raw_logs.append(logval)
         print(logval)
-        
+            
         if message.content.lower().strip().startswith('$wave'):
-            await message.channel.send('Hey there {0.author}! :wave::skin-tone-1:'.format(message))
+            author = message.author.split('#')[0]
+            await message.channel.send('Hey there {waver}! :wave::skin-tone-1:'.format(waver=author))
         
-UristBot = Urist_Bot()
+
 
 
 

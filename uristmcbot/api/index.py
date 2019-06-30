@@ -11,7 +11,7 @@ KEY_THREAD = 'thread'
 @hug.get(urls={'/', '/index'})
 @hug.local()
 def index(*args, **kwargs):
-    rval = {KEY_STATUS: 'uninitialized'}
+    rval = {KEY_STATUS: ('uninitialized' if app.bot is False else 'dead')}
     botname = getattr(app.bot, '_botname', None)
     status = "{Bot} {stat}.".format(
         Bot = botname or ('<nameless bot>' if app.bot else 'No bots'),
